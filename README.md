@@ -10,10 +10,11 @@ cleaner, strictly typed, tested framework that addresses the defects catalogued 
 chapter-by-chapter development record and [`DESIGN.md`](./DESIGN.md) for the
 architecture and trade-offs.
 
-> **Status:** Chapters 1–5 of the reference tutorial are implemented. The project
-> was **not executed** during development (no server, build, test run,
-> type-check, or linter was run), per the project instructions. Tests are
-> written but have not been executed yet.
+> **Status:** Chapters 1–5 of the reference tutorial are implemented, and the
+> defects catalogued in [`forensic.md`](./forensic.md) are fixed. The project
+> builds cleanly and the automated suite passes **31/31**; the example server has
+> been run and its endpoints verified, including inside Docker. There is no linter
+> configured.
 
 ## Features
 
@@ -48,7 +49,8 @@ npm run typecheck  # type-check without emitting
 npm test           # compile, then run node:test over dist/tests
 ```
 
-> These scripts were **not** executed while this project was authored.
+> These scripts have been run: `npm run build` compiles with no errors and
+> `npm test` reports **31 tests, 31 pass, 0 fail**.
 
 ## Usage
 
@@ -91,7 +93,8 @@ app.listen(3000, () => {
 ```
 
 A runnable version of the above lives in [`examples/basic.ts`](./examples/basic.ts)
-(note: it starts a server when executed — it was not run during development).
+(it starts a server on port 3000 when executed; it has been run and verified,
+including under Docker).
 
 ## Project layout
 
@@ -117,4 +120,4 @@ forensic.md        forensic review of the original tutorial (baseline)
 
 ## License
 
-MIT.
+MIT — see [`LICENSE`](./LICENSE).

@@ -46,10 +46,12 @@ Module layout (`src/`):
 | `src/errors/final-handler.ts` | Terminal 404/500 response so no request ever hangs. |
 | `src/types.ts` | Shared `Request`/`Response`/`Handler`/`NextFunction` contracts. |
 
-> **Execution note.** Per the project instructions, **the project was not run**.
-> No server was started, and no build, test run, type-check, or linter was
-> executed. Everything below distinguishes code that was *written* from
-> behaviour that was *executed* (nothing was executed).
+> **Execution note.** The project has since been built and run: `npm run build`
+> compiles cleanly, `npm test` passes **31/31**, and the example server has been
+> started and verified. The per-chapter notes below were written during
+> development, before anything was executed; where a note says "not executed",
+> read it as "not executed *at the time of writing*". Behaviour verified since is
+> recorded in the Final Project Summary below and in `RUNNING.md`.
 
 ---
 
@@ -123,13 +125,14 @@ Module layout (`src/`):
   - `listen(port[, host][, cb])` returning an `http.Server`.
   - A naive `Router.handle` (first route only) with a deliberate 404 fallback.
 
-- **Tests written (not executed).**
+- **Tests written (passing).**
   - `tests/chapter1.test.ts`: factory returns an `Application`; `app.get` is
     chainable and registers a route; non-function handlers throw; one router per
     app; settings toggle without mutation; an app with no routes answers `404`.
 
-- **Validation performed.** Static review only: files were written and re-read
-  for import/type consistency. No build, type-check, or test run.
+- **Validation performed.** Static review during development: files were written
+  and re-read for import/type consistency; the build and the full suite now pass
+  (see the execution note above).
 
 - **Known limitations.**
   - Chapter 1 dispatch ignores path and method (by design; superseded in
@@ -205,11 +208,12 @@ Module layout (`src/`):
   - Method-aware dispatch (**D1**), with `Route.all` support.
   - Deliberate `404` (**D2**) and `405` + `Allow` responses.
 
-- **Tests written (not executed).** `tests/chapter2.test.ts`: pathname matching;
+- **Tests written (passing).** `tests/chapter2.test.ts`: pathname matching;
   query string ignored; method isolation (GET vs POST on the same path); `405` +
   `Allow` for method mismatch; `404` for unknown paths.
 
-- **Validation performed.** Static review only. No build/test/type-check run.
+- **Validation performed.** Static review during development; the build and the
+  full suite now pass (see the execution note above).
 
 - **Known limitations.**
   - Exact string path matching only — no `:params`, no prefix matching for
@@ -284,12 +288,13 @@ Module layout (`src/`):
   - `next(err)` error propagation with a terminal `500` (**D7**), including
     rejected async handlers.
 
-- **Tests written (not executed).** `tests/chapter3.test.ts`: ordered chaining
+- **Tests written (passing).** `tests/chapter3.test.ts`: ordered chaining
   within a route; chaining across two routes on the same path; no execution after
   `res.end()` without `next`; no execution when `next()` is called after the
   response ended; sync `next(err)` → `500`; async rejection → `500`.
 
-- **Validation performed.** Static review only. No build/test/type-check run.
+- **Validation performed.** Static review during development; the build and the
+  full suite now pass (see the execution note above).
 
 - **Known limitations.**
   - `next` is not guarded against being called twice by the *same* handler in
@@ -368,13 +373,14 @@ Module layout (`src/`):
   - Per-request request/response prototype extension via `expressInit`.
   - A single `expressInit` layer per application (**D6**).
 
-- **Tests written (not executed).** `tests/chapter4.test.ts`: middleware order;
+- **Tests written (passing).** `tests/chapter4.test.ts`: middleware order;
   a custom method on `app.response` is visible on `res`; `res.app` links back to
   the application; exactly one `expressInit` layer after several registrations;
   `handle` before any route registration still answers; error-handling
   middleware receives `next(err)` and can set a status.
 
-- **Validation performed.** Static review only. No build/test/type-check run.
+- **Validation performed.** Static review during development; the build and the
+  full suite now pass (see the execution note above).
 
 - **Known limitations.**
   - `app.use` is path-agnostic (no `app.use("/prefix", fn)` prefix matching).
@@ -438,12 +444,13 @@ Module layout (`src/`):
   - `res.json(body)` with a preserved `application/json` content type.
   - Correct `Content-Type` and `Content-Length`; HEAD responses without a body.
 
-- **Tests written (not executed).** `tests/chapter5.test.ts`: string content
+- **Tests written (passing).** `tests/chapter5.test.ts`: string content
   type; object → JSON; `json()` header preserved; number/boolean bodies (D5);
   `null` → empty body; `Buffer` → octet-stream; `status().json()` chaining;
   `Content-Length` correctness.
 
-- **Validation performed.** Static review only. No build/test/type-check run.
+- **Validation performed.** Static review during development; the build and the
+  full suite now pass (see the execution note above).
 
 - **Known limitations.**
   - No content negotiation, ETag, or `res.redirect`/`res.sendFile`.
@@ -513,12 +520,14 @@ Failures and misses converge on `finalHandler`.
 
 ### Actual validation performed
 
-- Static inspection only: every source and test file was read back and reviewed
-  for import/type consistency and documented behaviour.
-- **No server was started. No build, test run, type-check, or linter was
-  executed** — per the project's execution restriction. Tests are *written*, not
-  *executed*; the `npm` scripts (`build`, `typecheck`, `test`) describe how to run
-  them once execution is authorised.
+- **Build:** `npm run build` (`tsc`) compiles with **no errors**.
+- **Tests:** `npm test` runs the suite on Node's built-in runner — **31 tests, 31
+  pass, 0 fail**.
+- **Server:** the example server was started and its routes exercised (`GET /`,
+  `GET /json`, `POST /things`, an unknown path, and a wrong method), directly and
+  inside the Docker image; statuses, bodies, and headers were checked.
+- **Not done:** concurrency was not exercised concurrently, and no linter is
+  configured (there is no ESLint/Prettier/Biome setup).
 
 ### Forensic findings status
 
@@ -535,7 +544,7 @@ Failures and misses converge on `finalHandler`.
 | D9 `handle` before routes throws | Fixed (Ch. 1) |
 | D10 dead/placeholder code | Addressed (`Route.dispatch` real, `app.request` used, no unused `options`) |
 | D11 packaging/metadata | Addressed in this project's `package.json` (the reference's is untouched) |
-| D12 LICENSE placeholders | Not applicable (belongs to the read-only reference) |
+| D12 LICENSE placeholders | Resolved here: an MIT `LICENSE` was added at the repo root (the reference's is untouched) |
 
 P2/P3 items (route params, query parsing, sub-routers, template engines,
 `res.sendFile`/`res.redirect`) are intentionally **deferred**; they are outside

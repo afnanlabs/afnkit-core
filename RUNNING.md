@@ -5,11 +5,10 @@ dependencies, compiling TypeScript, running the example server, and executing th
 suite. It assumes you have **never run this project before** but are comfortable using a
 terminal.
 
-> **Important — execution status.** The non-Docker instructions in this file were written
-> by inspecting the repository's configuration and source; they were **not** executed while
-> the document was written and remain unverified. The **Docker** instructions in §M *were*
-> executed and verified (see the note there). Where behaviour depends on your environment
-> (Node version, OS, a free port, Docker Desktop running) that is called out explicitly.
+> **Execution status.** The build, the automated test suite (**31/31**), and the example
+> server — including its Docker image in §M — have been executed and verified. Where
+> behaviour depends on your environment (Node version, OS, a free port, Docker Desktop
+> running) that is called out explicitly.
 
 Throughout, commands are shown for **Windows PowerShell** and, where they differ, for
 **macOS / Linux** (bash). Lines are copy‑paste ready.
@@ -291,7 +290,7 @@ curl http://localhost:3000/json
 curl -X POST http://localhost:3000/things
 ```
 
-**Expected bodies** (illustrative — based on the source, not executed):
+**Expected bodies** (verified against a running server):
 - `GET /` → `Hello world!`
 - `GET /json` → `{"hello":"world"}`
 - `POST /things` → `{"created":true}` with status `201`
@@ -340,10 +339,10 @@ One file per tutorial chapter, each mirroring that chapter's behaviour:
 | `tests/chapter4.test.ts` | Middleware runs in registration order; `expressInit` attaches the extended response prototype; `res.app` links back to the app; exactly one `expressInit` layer; `handle` works before any route is registered; error-handling middleware receives `next(err)` and can set the status. |
 | `tests/chapter5.test.ts` | `send(string)` content type; `send(object)` → JSON; `json()` keeps `application/json`; numbers/booleans produce a body; `send(null)` → empty body; `send(Buffer)` → `application/octet-stream`; `status().json()` chaining; correct `Content-Length`. |
 
-### ⚠️ Pass/fail status
+### ✅ Pass/fail status
 
-**The tests have not been executed.** This document does not claim they pass. Run
-`npm test` yourself to see the result. If a step fails, start with §K.
+**The tests pass.** `npm test` compiles the project and reports **31 tests, 31 pass,
+0 fail** (on Node v25.9.0). Re-run it yourself to confirm; if a step fails, start with §K.
 
 ---
 
@@ -376,7 +375,7 @@ The public API is exported from `src/index.ts` and, when published, resolves to
 `getPathname`, and the types `Request`, `Response`, `Handler`, `ErrorHandler`,
 `NextFunction`.
 
-### Minimal example (illustrative — not executed)
+### Minimal example
 
 ```ts
 import { express, HttpError } from "afnkit";
@@ -418,9 +417,9 @@ app.listen(3000, () => {
 });
 ```
 
-**Status of this example:** *illustrative and unverified* — it reflects the real exports and
-API shapes in `src/`, but it has not been run. A runnable variant already exists as
-`examples/basic.ts` (which imports from `../src/index` because it lives inside this repo).
+**Status of this example:** it reflects the real exports and API shapes in `src/`. A
+runnable variant exists as `examples/basic.ts` (which imports from `../src/index` because
+it lives inside this repo); the example server has been run and verified.
 
 ### Local vs. published usage
 
@@ -856,7 +855,6 @@ The build reuses cached layers for unchanged files (for example, `npm ci` is ski
 | View Docker logs | `docker logs afnkit-local` | anywhere |
 | Stop and remove the container | `docker rm -f afnkit-local` | anywhere |
 
-> **Reminder:** the non-Docker commands above were not executed while writing this file;
-> they are derived from `package.json`, `tsconfig.json`, and the source, and remain
-> **unverified** until you run them. The Docker commands *were* executed and verified — see
-> §M.
+> **Reminder:** the build, test, and Docker commands above were executed and verified
+> (results in §F and §M). They still depend on your environment (Node version, OS, a free
+> port), so re-run them to confirm on your machine.

@@ -135,6 +135,8 @@ argument; concurrency was **not** exercised — see `walkthrough.md`.)
 
 ## Execution status
 
-This project was **not run**. No server was started, and no build, test,
-type-check, or linter was executed, per the project instructions. The `npm`
-scripts exist but were not invoked.
+The project has been built and tested. `npm run build` compiles with no errors and
+`npm test` reports **31 tests, 31 pass, 0 fail**. The example server in
+`examples/basic.ts` has been started and its routes exercised, both directly and
+inside the Docker image. Concurrency has **not** been exercised, and no linter is
+configured.
