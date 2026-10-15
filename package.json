@@ -1,0 +1,35 @@
+{
+  "name": "afnkit",
+  "version": "0.1.0",
+  "description": "Afnkit is an original, educational Express-inspired HTTP framework built on Node.js native HTTP APIs in TypeScript.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsc -p tsconfig.json && node --test dist/tests/*.test.js",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "keywords": [
+    "express",
+    "http",
+    "framework",
+    "router",
+    "middleware",
+    "typescript",
+    "educational"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afnanlabs/afnkit-core.git"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
