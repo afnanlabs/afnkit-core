@@ -1,0 +1,40 @@
+# Normalize line endings.
+#
+# Text files are stored with LF in the repository and checked out with LF on
+# every platform. This keeps diffs clean and avoids CRLF/LF churn on Windows.
+* text=auto eol=lf
+
+# Explicit text types (for clarity; already covered by the rule above)
+*.ts            text
+*.tsx           text
+*.js            text
+*.json          text
+*.md            text
+*.txt           text
+*.yml           text
+*.yaml          text
+
+# Docker / config files
+Dockerfile      text
+.dockerignore   text
+.gitignore      text
+.gitattributes  text
+LICENSE         text
+
+# Shell scripts must keep LF
+*.sh            text eol=lf
+
+# Windows batch scripts must keep CRLF
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Binary files — never normalize or diff as text
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.pdf           binary
+*.woff          binary
+*.woff2         binary
+*.zip           binary
