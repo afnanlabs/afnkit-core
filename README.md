@@ -1,27 +1,120 @@
-# lets-build-express
+# Afnkit
 
-This series of chapters will teach you how to create the `express` library from scratch. This will help us understand how `express` actually works, behind the scenes.  I will use the same code, variable names, and so forth from `express` itself, so that people can read this tutorial and feel free to contribute to `express` directly.
+An original, educational **Express-inspired HTTP framework** written in
+**TypeScript** on top of Node.js native HTTP APIs.
 
-# Why?
-I find people do often get confused with how `next` works, or how route order works in `express`. By building the `express` library, we can gain a more solid understanding.  Also, it's fun! 
+It is built by studying the concepts in the `lets-build-express/` tutorial
+(kept in this repository as a read-only reference) and re-implementing them as a
+cleaner, strictly typed, tested framework that addresses the defects catalogued in
+[`forensic.md`](./forensic.md). See [`walkthrough.md`](./walkthrough.md) for the
+chapter-by-chapter development record and [`DESIGN.md`](./DESIGN.md) for the
+architecture and trade-offs.
 
-Each chapter will build `express` step by step with running examples.
+> **Status:** Chapters 1–5 of the reference tutorial are implemented. The project
+> was **not executed** during development (no server, build, test run,
+> type-check, or linter was run), per the project instructions. Tests are
+> written but have not been executed yet.
 
-Here is the TOC:
+## Features
 
-1. [Chapter 01 -- Building Express Abstractions](https://github.com/antoaravinth/lets-build-express/blob/master/chap01/CHAP01.md)
-2. [Chapter 02 -- Handling routes out of the box](https://github.com/antoaravinth/lets-build-express/blob/master/chap02/CHAP02.md)
-3. [Chapter 03 -- Implement `next` function](https://github.com/antoaravinth/lets-build-express/blob/master/chap03/CHAP03.md)
-4. [Chapter 04 -- Extending Response Object](https://github.com/antoaravinth/lets-build-express/blob/master/chap04/CHAP04.md)
-5. [Chapter 05 -- Implementing `send`/`json` on `response`](https://github.com/antoaravinth/lets-build-express/blob/master/chap05/CHAP05.md)
-6. Chapter 06 -- Error Handling (WIP)
-7. More to come.
+- `express()` factory returning a typed `Application`.
+- Route registration: `get`, `post`, `put`, `delete`, `patch`, `options`, `head`,
+  `connect`, `trace`, and `all`.
+- Middleware via `app.use(...)`, including 4-argument error-handling middleware.
+- Path matching (query string ignored) with **method-aware** dispatch.
+- A real `next()` with correct gating: one handler per cycle, and no execution
+  after the response has ended.
+- Error propagation (`next(err)`) for synchronous throws **and** rejected async
+  handlers.
+- Deliberate `404` / `405` (with `Allow`) / `500` responses — requests never
+  hang.
+- Per-request request/response prototype extension (`app.request` /
+  `app.response`).
+- `res.status`, `res.send`, `res.json` with correct content types.
+- `HttpError` for deliberate status codes.
+- Zero runtime dependencies; tests use the built-in `node:test` runner.
 
-#### Note
-Its work in progress, but minimal working library and the corresponding tutorial is done. 
+## Requirements
 
-#### Contributions Welcome
-Feel free to improve this repo: grammar mistakes, technical glitches, maybe translations?  Happy to accept PRs.
+- Node.js 18+ (the test suite uses the global `fetch`, available from Node 18).
+- TypeScript (dev dependency) for building.
 
-#### License
-[MIT](https://github.com/antoaravinth/lets-build-express/blob/master/LICENSE.md)
+## Install and build
+
+```bash
+npm install
+npm run build      # compile to dist/
+npm run typecheck  # type-check without emitting
+npm test           # compile, then run node:test over dist/tests
+```
+
+> These scripts were **not** executed while this project was authored.
+
+## Usage
+
+```ts
+import { express, HttpError } from "afnkit";
+
+const app = express();
+
+// Middleware runs for every request, in order.
+app.use((req, res, next) => {
+  res.setHeader("X-Powered-By", "Afnkit");
+  next();
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello world!");
+});
+
+app.get("/users/:id", (req, res) => {
+  // Note: route parameters are not parsed yet; this matches the literal path.
+  res.json({ id: req.path });
+});
+
+app.post("/echo", (req, res) => {
+  res.status(201).json({ ok: true });
+});
+
+// Error-handling middleware (four arguments) catches next(err) and throws.
+app.use((err, req, res, next) => {
+  if (err instanceof HttpError) {
+    res.status(err.status).send(err.message);
+    return;
+  }
+  next(err);
+});
+
+app.listen(3000, () => {
+  console.log("Listening on http://localhost:3000");
+});
+```
+
+A runnable version of the above lives in [`examples/basic.ts`](./examples/basic.ts)
+(note: it starts a server when executed — it was not run during development).
+
+## Project layout
+
+```
+src/               the framework (TypeScript)
+tests/             automated tests (node:test)
+examples/          usage examples
+lets-build-express/  read-only tutorial reference (not modified)
+walkthrough.md     chapter-by-chapter development history
+DESIGN.md          architecture and design decisions
+forensic.md        forensic review of the original tutorial (baseline)
+```
+
+## Known limitations
+
+- Exact-string path matching only: no `:params`, wildcards, regex, or
+  path-prefixed `app.use`.
+- No query parsing (`req.query`) or body parsing.
+- No implicit HEAD→GET mapping, content negotiation, ETag, redirects, or static
+  file serving.
+- No `next` double-call guard within a single handler tick.
+- Error-handling detection relies on handler arity (four parameters).
+
+## License
+
+MIT.
