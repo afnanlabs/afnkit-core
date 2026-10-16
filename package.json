@@ -11,7 +11,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "tsc -p tsconfig.json && node --test dist/tests/*.test.js",
-    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [
     "express",
@@ -22,11 +23,18 @@
     "typescript",
     "educational"
   ],
-  "author": "",
+  "author": "Afnan Khan",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/afnanlabs/afnkit-core.git"
+  },
+  "homepage": "https://github.com/afnanlabs/afnkit-core#readme",
+  "bugs": {
+    "url": "https://github.com/afnanlabs/afnkit-core/issues"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
