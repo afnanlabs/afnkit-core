@@ -1,5 +1,7 @@
 # Afnkit
 
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/afnanlabs/afnkit-core?utm_source=readme&utm_medium=badge)
+
 An original, educational **Express-inspired HTTP framework** written in
 **TypeScript** on top of Node.js native HTTP APIs.
 
@@ -15,6 +17,10 @@ architecture and trade-offs.
 > builds cleanly and the automated suite passes **31/31**; the example server has
 > been run and its endpoints verified, including inside Docker. There is no linter
 > configured.
+
+## Architecture
+
+[![Architecture diagram of afnanlabs/afnkit-core](https://gitdiagram.com/afnanlabs/afnkit-core/diagram.png)](https://gitdiagram.com/afnanlabs/afnkit-core?utm_source=readme&utm_medium=picture)
 
 ## Features
 
